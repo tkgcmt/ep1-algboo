@@ -1,0 +1,11 @@
+Algebra Booleana e Aplicações - MAC0329
+EP1 - Algoritmo ISI
+Aluno: Christian M. T. Takagi   nUSP: 7136971
+
+Esse exercício-programa tem como objetivo implementar o algoritmo ISI, de acordo com as especificações do enunciado passado no PACA.
+
+Para chamar o programa, insira os mintermos da função a ser minimizada, como no exemplo:
+$ isi-alg 000 010 100 110 111
+onde isi-alg e' o nome do programa, seguido da lista dos mintermos.
+
+O programa tem complexidade de tempo O(t)= XX??. Os termos sao processados em matrizes de chars a todo momento.
