@@ -13,12 +13,6 @@
 #include <malloc.h>
 #include "termos.h"
 
-/* Para facilitar a leitura do programa, crio o tipo bool para tratar valores booleanos  */ 
-typedef struct boolean {
-int false = 1;
-int true = 0;
-} bool;
-
 
 /* Aloca uma matriz de chars para representar os termos da funcao */
 char** malloc_S(char **S, int var, int termos) {
@@ -39,6 +33,22 @@ char** malloc_S(char **S, int var, int termos) {
     }
 }
 
+/* Cria uma lista ligada para representar o conjunto dos termos */
+void new_lst(TERMO head, int size, *char[]) {
+	int i;
+	TERMO *p;
+	
+	for( i = 0, p = head; i < size; i++, p = p->next)
+		p = new_t(char[i], i);
+}
+
+/* Copia a celula, do tipo TERMO, A em B */
+void cpy_t(TERMO A, TERMO B) {
+	strcpy(B.body = A.body);
+	B.index = A.index;
+	B.next = A.index;
+}
+
 /* Imprime uma matriz de char */
 void printMc(char **matrix, int rows, int columns) {
     int r, c;
@@ -49,16 +59,18 @@ void printMc(char **matrix, int rows, int columns) {
     }
 }
 
-
-/* Realiza o algoritmo ISI */
 int main(int argc, char argv[]) {
     /* Sao contadores */
     int i, j, k; 
     /* Sao os conjuntos de termos */
-    char **C, **D; 
+    char **ncubo, **maxtermos;
     /* Sao constantes ou variaveis auxiliares */
     int  vars, n, lenD, temp1, temp2;
-     
+    /* Sao cabecas das estruturas ligadas */
+	TERMO C, D, X;
+	/* Sao ponteiros auxiliares */
+	TERMO *p;
+	
     /* Trata erros da entrada */
     for(i = 0; i < argc; i++) {
         for(j = 0; argv[i][j] != '0' && argv[i][j] != '1'; j++) {
@@ -66,6 +78,7 @@ int main(int argc, char argv[]) {
             break;
         }
     }
+	printMC(argv, argc, vars);
 
     /* Define as varieis a serem tratadas como constantes de atributos dos vetores */
     vars = strlen(argv[0]);
@@ -73,17 +86,16 @@ int main(int argc, char argv[]) {
     lenD = n - argc;
 
     /* Aloca memoria para os vetores */
-    malloc_S(A, vars, lenA);
-    malloc_S(C, vars, argc);
-    malloc_S(D, vars, lenD);
+    malloc_S(ncubo, vars, argc);
+    malloc_S(maxtermos, vars, lenD);
     
-    /* Cria a matriz C que nada mais eh do que um n-cubo */
+    /* Cria o n-cubo */
     for(j = vars - 1, temp1 = 1, temp2 = -1; j >= 0; j--) {
         for(i = 0, k = 1; k <= temp1 && i < n; k++) {
             if (temp2 == -1)
-                C[i++][j] = 0;
+                ncubo[i++][j] = 0;
             else 
-                C[i++][j] = 1;
+                ncubo[i++][j] = 1;
 
             if (k == temp1)
                 temp2 *= -1;
@@ -91,20 +103,26 @@ int main(int argc, char argv[]) {
         temp1 *= 2;
     
     }
-
-    printMc(C, n, vars);
-      
+    printMc(ncubo, n, vars);
+	
+	/* Cria a lista de estruturas ligadas que representa o conjunto C */
+	new_lst (C, n, ncubo);
+	
     /* Os termos de C nao existentes na lista de mintermos, ou seja, os maxtermos, sao armazenados na matriz D */
     for (i = 0, k = 0; i < n; i++)
-        for (j = 0; j < argc; j++) {
+        for (j = 0; j < argc; j++)
             if (strcmp(C[i], argv[j]) != 0) {
                 strcpy(D[k], C[i]);
                 k++;
-            }
-    
+            }		
+	
+	/* Cria a lista de estruturas ligadas que representa o conjunto D */
+	new_lst (D, lenD, maxtermos)
+	
     /* Aplica o algoritmo ISI */
     for (i = 0, j = 0, k = 0; D != NULL; ) {
-        /* Remove o termo X de D */
-        D[i]
-
+        /* Remove o primeiro termo de D - o termo X */
+		cpy_t(D, X);
+		rm_t(D);
+		
 }
