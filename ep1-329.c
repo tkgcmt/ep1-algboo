@@ -11,173 +11,164 @@
 #include <stdio.h>
 #include <math.h>
 #include <malloc.h>
-/*#include "termos.h"*/
-
-typedef struct t {
-char *body;
-int index;
-} TERMO;
-
-/* Cria uma celula e insere no final da lista */
-TERMO new_t(char *body, int index) {
-    TERMO *p;
-    p = (TERMO*) malloc (1, sizeof(TERMO));
-    if (p == NULL) {
-        printf ("Erro de memoria - malloc retornou NULL");
-        exit (0);
-        return (NULL);
-    }
-    p.body = body;
-    p.index = index;
-    
-    return p;
-}
-
-/* Remove uma celula da lista e devolve a celula removida*/
-TERMO rm_t(TERMO *head, TERMO *item) {
-    TERMO *p;
-    for (p = head; p->next != item || p->next != NULL; p = p->next);
-    if (p->next == NULL) {
-        printf("Termo nao encontrado ou invalido");
-        return NULL;
-    }
-    p->next = p->next->next;
-    free(item);
-    for (p = p->next; p->next != NULL; p = p->next)
-        p.index--;
-
-    return item;
-}
+#include <string.h>
+#include "termos.h"
 
 
 /* Aloca uma matriz de chars para representar os termos da funcao */
-char** mallocS (char **S, int var, int termos) {
+char **callocS (char **S, int var, int termos) {
     int i;
-    S = (char*) malloc (termos, sizeof(char));
-    if ( == NULL) {
+    S = (char**) calloc (termos, sizeof(char**));
+    if (S == NULL) {
         printf ("Erro de memoria\n");
         return NULL;
     }
 
-    for (i = 0; i < var; i ++) {
-        S[i] = (char*) malloc (var, sizeof(char));
+    for (i = 0; i < termos; i ++) {
+        S[i] = (char*) calloc (var, sizeof(char*));
         if (S[i] == NULL) {
             printf ("Erro de memoria\n");
             exit (1);
             return NULL;
         }
     }
+    return S;
 }
 
 /* Cria uma lista ligada para representar o conjunto dos termos */
-void new_lst (TERMO head, int size, *char[]) {
+void new_lst (TERMO *head, int size, char **body) {
 	int i;
 	TERMO *p;
-	
+
 	for (i = 0, p = head; i < size; i++, p = p->next)
-		p = new_t (char[i], i);
+		p->next = new_t (body[i], i);
 }
 
 /* Copia a celula, do tipo TERMO, A em B */
-void cpy_t (TERMO A, TERMO B) {
-	strcpy(B.body = A.body);
-	B.index = A.index;
-	B.next = A.index;
+void cpy_t (TERMO *A, TERMO *B) {
+	strcpy(B->body, A->body);
+	B->index = A->index;
+	B->next = A->next;
 }
 
 /* Imprime uma matriz de char */
-void printS (char **matrix, int rows, int columns) {
+void printS (char **matrix, int rows) {
     int r, c;
-    for (r = 0; i < rows; r++) {
-        for (c = 1; c < columns+1; c++)
-            printf ("%c ", matrix[r][c]);
-        printf ("\n");
+    for (r = 0; r < rows; r++) {
+        printf ("%s\n", matrix[r]);
     }
 }
 
 /* Imprime as strings de uma lista TERMO*/
-void printb (TERMO head, int len) {
+void printb (TERMO *head, int len) {
     TERMO *p;
     int i;
 
     for (p = head; p->next != NULL; p = p->next) {
         for (i = 0; i < len; i++)
             printf ("%c", p->body[i]);
-        printf("\n");
+        printf ("\n");
     }
 }
 
-
-int main (int argc, char argv[]) {
+int main (int argc, char *argv[]) {
     /* Sao contadores */
-    int i, j, k; 
+    int i, j, k;
     /* Sao os conjuntos de termos */
     char **C, **maxtermos;
     /* Sao constantes ou variaveis auxiliares */
-    int  vars, n, lenD, temp1, temp2;
+    int  vars, n, lenD, mint, temp1, temp2;
     /* Sao cabecas das estruturas ligadas */
-	TERMO D, X;
+	TERMO *D, *X;
 	/* Sao ponteiros auxiliares */
 	TERMO *p;
-	
-    /* Trata erros da entrada */
-    for (i = 0; i < argc; i++) {
-        for (j = 0; argv[i][j] != '0' && argv[i][j] != '1'; j++) {
-	    printf ("A entrada deve ser no formato booleano, aceitando somente 0's e 1's.\n");
-            break;
-        }
-    }
-    
-    printf("Mintermos");
-	printS (argv, argc, vars);
+
 
     /* Define as varieis a serem tratadas como constantes de atributos dos vetores */
-    vars = strlen (argv[0]);
+    vars = strlen (argv[1]);
+    mint = argc -1;
     n = pow (2, vars);
     lenD = n - argc;
+    D = (TERMO*) malloc (sizeof(TERMO));
+    X = (TERMO*) malloc (sizeof(TERMO));
+    if (X == NULL || D == NULL) {
+        printf("Erro de memoria");
+        exit(1);
+    }
+    printS (argv, argc);
+    printf ("\n");
+
+    printf ("vars: %d\nn: %d\nlenD: %d\nmint: %d\n", vars, n, lenD, mint);
+    printf ("\n");
+
+    /* Trata erros da entrada 
+    for (i = 1; i < mint; i++) {
+        for (j = 0; vars; j++) {
+	        if(argv[i][j] != '0' ||  argv[i][j] != '1')
+            printf ("A entrada deve ser no formato booleano, aceitando somente 0's e 1's.\n");
+                exit(-1);
+        }
+    }*/
+
+    printf("Mintermos\n");
+	printS (argv, mint);
+    printf ("\n");
+
 
     /* Aloca memoria para os vetores */
-    mallocS (C, vars, argc);
-    mallocS (D, vars, lenD);
+    callocS (C, vars, mint);
     
+    printf ("mallocou C\n");
+    printS (C, mint);
+
     /* Cria o n-cubo */
-    for (j = vars - 1, temp1 = 1, temp2 = -1; j >= 0; j--) {
+    for (j = vars -1, temp1 = 1, temp2 = -1; j >= 0; j--) {
         for (i = 0, k = 1; k <= temp1 && i < n; k++) {
-            if (temp2 == -1)
-                C[i++][j] = 0;
-            else 
-                C[i++][j] = 1;
+            printf("i = %d  j = %d  k = %d  temp1 = %d  temp2 = %d\n", i, j, k, temp1, temp2);
+            if (temp2 == -1) {
+                C[i][j] = 0;
+                i++;
+            }
+
+            else {
+                C[i][j] = 1;
+                i++;
+            }
 
             if (k == temp1)
                 temp2 *= -1;
         }
         temp1 *= 2;
+        printf("i = %d  j = %d  k = %d  temp1 = %d  temp2 = %d\n", i, j, k, temp1, temp2); 
     }
 
-    printf("C:");
-    printS(C, n, vars);
-	
-	
-    /* Cria a lista de estruturas ligadas que representa o conjunto D */
-	new_lst (D, lenD, maxtermos)
-	
+    printf("\nC:\n");
+    printS(C, n);
 
-    /* Os termos de C nao existentes na lista de mintermos, ou seja, os maxtermos, sao armazenados na lista D */
-    for (i = 0, p = D; i < n; i++)
-        for (j = 0; j < argc; j++)
+
+    /* Os termos de C nao existentes na lista de mintermos, ou seja, os maxtermos, serao armazenados na lista D */
+    for (i = 0, k = 0; i < n; i++) {
+        for (j = 0; j < mint; j++) {
             if (strcmp(C[i], argv[j]) != 0) {
-                strcpy(p->body, C[i]);
-                p = p->next;
+                strcpy(maxtermos[k], C[i]);
+                k++;
             }
+        }
+    }
 
-    printf("D:");
+    /* Cria a lista de estruturas ligadas que representa o conjunto D */
+	new_lst (D, lenD, maxtermos);
+
+
+    printf("\nD:\n");
     printb (D, lenD);
-    
-    
+
+
     /* Aplica o algoritmo ISI */
-    /*for (i = 0, j = 0, k = 0; D != NULL; ) {
+    /*for (i = 0, j = 0, k = 0; D != NULL; ) { */
         /* Remove o primeiro termo de D - o termo X */
-		cpy_t(D, X);
-		rm_t(D);
-	*/	
+	/*  cpy_t(D, X);
+		rm_t(D, X);
+	*/
+	return 1;
 }

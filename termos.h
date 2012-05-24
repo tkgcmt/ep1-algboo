@@ -4,7 +4,8 @@
 typedef struct t {
 char *body;
 int index;
+struct t *next;
 } TERMO;
 
-int new_t(char *content, int index);
-int rm_t(int index);
+TERMO *new_t(char *body, int index);
+TERMO *rm_t(TERMO *head, TERMO *item);
