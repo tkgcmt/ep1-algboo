@@ -115,8 +115,12 @@ int main (int argc, char *argv[]) {
 
 
     /* Aloca memoria para os vetores */
-    callocS (C, mint, vars);
-    
+    C = callocS (C, mint, vars);
+
+/*    C = (char**) calloc (mint, sizeof(char*));
+    for (i = 0; i < mint; i++)
+        C[i] = (char*) calloc (vars, sizeof(char));
+*/    
     printf ("mallocou C\n");
     printS (C, mint);
 
