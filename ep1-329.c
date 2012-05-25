@@ -18,18 +18,17 @@
 /* Aloca uma matriz de chars para representar os termos da funcao */
 char **callocS (char **S, int var, int termos) {
     int i;
-    S = (char**) calloc (termos, sizeof(char**));
+    S = (char**) calloc (termos, sizeof(char*));
     if (S == NULL) {
         printf ("Erro de memoria\n");
-        return NULL;
+        exit(1);
     }
 
     for (i = 0; i < termos; i ++) {
-        S[i] = (char*) calloc (var, sizeof(char*));
+        S[i] = (char*) calloc (var, sizeof(char));
         if (S[i] == NULL) {
             printf ("Erro de memoria\n");
             exit (1);
-            return NULL;
         }
     }
     return S;
@@ -53,7 +52,7 @@ void cpy_t (TERMO *A, TERMO *B) {
 
 /* Imprime uma matriz de char */
 void printS (char **matrix, int rows) {
-    int r, c;
+    int r;
     for (r = 0; r < rows; r++) {
         printf ("%s\n", matrix[r]);
     }
@@ -75,13 +74,13 @@ int main (int argc, char *argv[]) {
     /* Sao contadores */
     int i, j, k;
     /* Sao os conjuntos de termos */
-    char **C, **maxtermos;
+    char **C = NULL, **maxtermos = NULL;
     /* Sao constantes ou variaveis auxiliares */
     int  vars, n, lenD, mint, temp1, temp2;
     /* Sao cabecas das estruturas ligadas */
-	TERMO *D, *X;
+	TERMO *D = NULL, *X = NULL;
 	/* Sao ponteiros auxiliares */
-	TERMO *p;
+	TERMO *p = NULL;
 
 
     /* Define as varieis a serem tratadas como constantes de atributos dos vetores */
@@ -116,7 +115,7 @@ int main (int argc, char *argv[]) {
 
 
     /* Aloca memoria para os vetores */
-    callocS (C, vars, mint);
+    callocS (C, mint, vars);
     
     printf ("mallocou C\n");
     printS (C, mint);
