@@ -16,16 +16,16 @@
 
 
 /* Aloca uma matriz de chars para representar os termos da funcao */
-char **callocS (char **S, int var, int termos) {
+char **callocS (char **S, int rows, int columns) {
     int i;
-    S = (char**) calloc (termos, sizeof(char*));
+    S = (char**) calloc (rows, sizeof(char*));
     if (S == NULL) {
         printf ("Erro de memoria\n");
         exit(1);
     }
 
-    for (i = 0; i < termos; i ++) {
-        S[i] = (char*) calloc (var, sizeof(char));
+    for (i = 0; i < rows; i ++) {
+        S[i] = (char*) calloc (columns, sizeof(char));
         if (S[i] == NULL) {
             printf ("Erro de memoria\n");
             exit (1);
@@ -115,34 +115,58 @@ int main (int argc, char *argv[]) {
 
 
     /* Aloca memoria para os vetores */
-    C = callocS (C, mint, vars);
-
+    C = callocS (C, n, vars);
+    maxtermos = callocS (maxtermos, lenD, vars);
 /*    C = (char**) calloc (mint, sizeof(char*));
     for (i = 0; i < mint; i++)
         C[i] = (char*) calloc (vars, sizeof(char));
 */    
-    printf ("mallocou C\n");
-    printS (C, mint);
+    printf ("mallocou C     n = %d\n", n);
+    strcpy(C[0], "abc");
+    strcpy(C[1], "def");
+    strcpy(C[2], "ghi");
+    strcpy(C[3], "jkl");
+    strcpy(C[4], "mno");
+    strcpy(C[5], "pqr");
+    strcpy(C[6], "stu");
+    strcpy(C[7], "vxw");
+    printS (C, n);
+    C[0][0] = 'A'; C[0][1] = 'B'; C[0][2] = 'C';
+    printf("%s\n\n", C[0]);
 
     /* Cria o n-cubo */
     for (j = vars -1, temp1 = 1, temp2 = -1; j >= 0; j--) {
-        for (i = 0, k = 1; k <= temp1 && i < n; k++) {
-            printf("i = %d  j = %d  k = %d  temp1 = %d  temp2 = %d\n", i, j, k, temp1, temp2);
-            if (temp2 == -1) {
-                C[i][j] = 0;
-                i++;
+        printf("for j\n");
+
+        for (i = 0; i < n;){
+            printf("for i\n");
+
+            for(k = 0; k < temp1;) {
+                if (temp2 == -1) {
+                    printf("if -1\n");
+                    C[i][j] = '0';
+                    i++;
+                }
+
+                else {
+                    printf("if 1\n");
+                    C[i][j] = '1';
+                    i++;
+                }
+                printf("k = %d\n", k);
+                k++;
+                if (k == temp1)
+                    temp2 *= -1;
             }
 
-            else {
-                C[i][j] = 1;
-                i++;
-            }
+        printf("i = %d  j = %d  k = %d  temp1 = %d  temp2 = %d\n", i, j, k, temp1, temp2);
 
-            if (k == temp1)
-                temp2 *= -1;
         }
-        temp1 *= 2;
-        printf("i = %d  j = %d  k = %d  temp1 = %d  temp2 = %d\n", i, j, k, temp1, temp2); 
+
+    temp1 *= 2;
+
+    printf("i = %d  j = %d   temp1 = %d  temp2 = %d\n\n", i, j, temp1, temp2);
+
     }
 
     printf("\nC:\n");
@@ -154,6 +178,7 @@ int main (int argc, char *argv[]) {
         for (j = 0; j < mint; j++) {
             if (strcmp(C[i], argv[j]) != 0) {
                 strcpy(maxtermos[k], C[i]);
+                printf("max: %s     C:%s", maxtermos[k], C[i]);
                 k++;
             }
         }
