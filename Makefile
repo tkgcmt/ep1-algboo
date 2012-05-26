@@ -1,4 +1,4 @@
-CFLAGS = -Wall -pedantic -O2 -ansi -lm -g
+CFLAGS = -Wall -pedantic -ansi -lm -g
 all: ISI
 
 termos.o: termos.c

@@ -14,62 +14,35 @@
 #include <string.h>
 #include "termos.h"
 
+#define compl(a) (a != '0' ? (a == '1' ? '0' : 'X') : '1')
 
-/* Aloca uma matriz de chars para representar os termos da funcao */
-char **callocS (char **S, int rows, int columns) {
-    int i;
-    S = (char**) calloc (rows, sizeof(char*));
-    if (S == NULL) {
-        printf ("Erro de memoria\n");
-        exit(1);
-    }
+/* Verifica se a celula in esta contida em um  intervalo da lista - se estiver, remove in da lista*/
+int vrf (TERMO *in, TERMO *head, int vars) {
+    TERMO *p;
+    int i, 
+    control = 0;
 
-    for (i = 0; i < rows; i ++) {
-        S[i] = (char*) calloc (columns, sizeof(char));
-        if (S[i] == NULL) {
-            printf ("Erro de memoria\n");
-            exit (1);
+    for (p = head->next; p != in; p = p->next) {
+        for (i = 0; i < vars; i++) {
+            if (compl(in->body[i]) == p->body[i])
+                return 0;
+            else if (in->body[i] == 'x' &&  p->body[i] != 'x') {
+                control++;
+            }
+            else if( in->body[i] != 'x' &&  p->body[i] == 'x') { 
+                control++;
+            }
+
         }
     }
-    return S;
-}
-
-/* Cria uma lista ligada para representar o conjunto dos termos */
-void new_lst (TERMO *head, int size, char **body) {
-	int i;
-	TERMO *p;
-
-	for (i = 0, p = head; i < size; i++, p = p->next)
-		p->next = new_t (body[i], i);
-}
-
-/* Copia a celula, do tipo TERMO, A em B */
-void cpy_t (TERMO *A, TERMO *B) {
-	strcpy(B->body, A->body);
-	B->index = A->index;
-	B->next = A->next;
-}
-
-/* Imprime uma matriz de char */
-void printS (char **matrix, int rows) {
-    int r;
-    for (r = 0; r < rows; r++) {
-        printf ("%s\n", matrix[r]);
+    if (control == vars) {
+        return 0;
     }
+    
+    rm_t (head, in->index);
+    return 1;
 }
-
-/* Imprime as strings de uma lista TERMO*/
-void printb (TERMO *head, int len) {
-    TERMO *p;
-    int i;
-
-    for (p = head; p->next != NULL; p = p->next) {
-        for (i = 0; i < len; i++)
-            printf ("%c", p->body[i]);
-        printf ("\n");
-    }
-}
-
+    
 int main (int argc, char *argv[]) {
     /* Sao contadores */
     int i, j, k;
@@ -80,14 +53,14 @@ int main (int argc, char *argv[]) {
     /* Sao cabecas das estruturas ligadas */
 	TERMO *D = NULL, *X = NULL;
 	/* Sao ponteiros auxiliares */
-	TERMO *p = NULL;
-
+	TERMO *d = NULL, *x = NULL;
+    
 
     /* Define as varieis a serem tratadas como constantes de atributos dos vetores */
     vars = strlen (argv[1]);
     mint = argc -1;
     n = pow (2, vars);
-    lenD = n - argc;
+    lenD = n - mint;
     D = (TERMO*) malloc (sizeof(TERMO));
     X = (TERMO*) malloc (sizeof(TERMO));
     if (X == NULL || D == NULL) {
@@ -100,41 +73,8 @@ int main (int argc, char *argv[]) {
     printf ("vars: %d\nn: %d\nlenD: %d\nmint: %d\n", vars, n, lenD, mint);
     printf ("\n");
 
-    /* Trata erros da entrada 
-    for (i = 1; i < mint; i++) {
-        for (j = 0; vars; j++) {
-	        if(argv[i][j] != '0' ||  argv[i][j] != '1')
-            printf ("A entrada deve ser no formato booleano, aceitando somente 0's e 1's.\n");
-                exit(-1);
-        }
-    }*/
-
-    printf("Mintermos\n");
-	printS (argv, mint);
-    printf ("\n");
-
-
-    /* Aloca memoria para os vetores */
-    C = callocS (C, n, vars);
-    maxtermos = callocS (maxtermos, lenD, vars);
-/*    C = (char**) calloc (mint, sizeof(char*));
-    for (i = 0; i < mint; i++)
-        C[i] = (char*) calloc (vars, sizeof(char));
-*/    
-    printf ("mallocou C     n = %d\n", n);
-    strcpy(C[0], "abc");
-    strcpy(C[1], "def");
-    strcpy(C[2], "ghi");
-    strcpy(C[3], "jkl");
-    strcpy(C[4], "mno");
-    strcpy(C[5], "pqr");
-    strcpy(C[6], "stu");
-    strcpy(C[7], "vxw");
-    printS (C, n);
-    C[0][0] = 'A'; C[0][1] = 'B'; C[0][2] = 'C';
-    printf("%s\n\n", C[0]);
-
     /* Cria o n-cubo */
+    C = callocS (C, n, vars);
     for (j = vars -1, temp1 = 1, temp2 = -1; j >= 0; j--) {
         printf("for j\n");
 
@@ -171,32 +111,69 @@ int main (int argc, char *argv[]) {
 
     printf("\nC:\n");
     printS(C, n);
-
+    
+    /* Cria o maxtermo */ 
+    maxtermos = callocS (maxtermos, lenD, vars);
+/*
+    strcpy(maxtermos[0], "010");
+    strcpy(maxtermos[1], "011");
+    strcpy(maxtermos[2], "111");
+   
+    printf("Fmaxtermos\n");
+    printS(maxtermos, lenD);
+    */
 
     /* Os termos de C nao existentes na lista de mintermos, ou seja, os maxtermos, serao armazenados na lista D */
+    
     for (i = 0, k = 0; i < n; i++) {
-        for (j = 0; j < mint; j++) {
-            if (strcmp(C[i], argv[j]) != 0) {
-                strcpy(maxtermos[k], C[i]);
-                printf("max: %s     C:%s", maxtermos[k], C[i]);
-                k++;
-            }
+        j = 1;
+        while (j < mint && strcmp (C[i], argv[j]) != 0)
+            j++;
+
+        if (strcmp (C[i], argv[j]) != 0) {
+            maxtermos[k] = strcpy (maxtermos[k], C[i]);
+            k++;
         }
     }
 
+    printf("\nMaxtermos\n");
+    printS(maxtermos, lenD);
+
+       
     /* Cria a lista de estruturas ligadas que representa o conjunto D */
 	new_lst (D, lenD, maxtermos);
-
+    
 
     printf("\nD:\n");
-    printb (D, lenD);
+    printb (D, vars);
+    
+/*
+    X->next = new_t ("xxx", 0);
+    d = D->next; x = X->next;
+    while (D->next != NULL) {
+        for (j = 0; j < vars; j++) {
+            x->next = new_t(NULL, x->index + 1);
+            if (d->body[j] != compl(x->body[k])) {
+                
+                
+                
 
 
-    /* Aplica o algoritmo ISI */
-    /*for (i = 0, j = 0, k = 0; D != NULL; ) { */
-        /* Remove o primeiro termo de D - o termo X */
-	/*  cpy_t(D, X);
-		rm_t(D, X);
-	*/
+
+
+/*
+            if (x->body[i] == 'x') {
+                x->next->body[j] = compl(d->body[j]);
+                for (k = j + 1; k < vars; k++)
+                    x->next->body[k] = d->body[k];
+                for (k = j - 1; k < 0; k++)
+                    x->next->body[k] = d->body[k];
+                j = vars;
+                printf("x->body = %s\n", x->body);
+            }
+            
+            else if (x->body[j] == compl(d->body[j]) {
+  */
+              
 	return 1;
 }
