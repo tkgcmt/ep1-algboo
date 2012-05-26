@@ -4,8 +4,16 @@ Aluno: Christian M. T. Takagi   nUSP: 7136971
 
 Esse exercício-programa tem como objetivo implementar o algoritmo ISI, de acordo com as especificações do enunciado passado no PACA.
 
-Para chamar o programa, insira os mintermos da função a ser minimizada, como no exemplo:
-$ isi-alg 000 010 100 110 111
-onde isi-alg e' o nome do programa, seguido da lista dos mintermos.
+Para chamar o programa, insira os mintermos da função a ser minimizada, como no exemplo (em um terminal linux):
+$./ISI  000 001 100 101 110
 
-O programa tem complexidade de tempo O(t)= XX??. Os termos sao processados em matrizes de chars a todo momento.
+Onde ISI e' o nome do programa, seguido da lista dos MINtermos.
+A sai'da e' apresentada no formato:
+x0x
+1x0
+
+Onde cada linha representa um intervalo ou ncubo.
+
+O programa trabalha com listas ligadas para representar os conjuntos dos maxtermos e dos intervalos ou n-cubos. A lista de mintermos e o hipercubo são matrizes.
+
+O maior desafio desse programa foi tratar dos intervalos e as verificações para saber se um intervalo contém outro.
