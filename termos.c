@@ -42,18 +42,17 @@ TERMO *new_t(char *body, int index) {
     }
     p->body = body;
     p->index = index;
+    p->next = NULL;
 
     return p;
 }
 
 /* Remove uma celula da lista e devolve a celula removida*/
 void rm_t(TERMO *head, int index) {
-
     TERMO *p, *buff;
     int i;
 
     for (i = 0, p = head; i < index; i++, p = p->next);
-    printf("%s", p->body);
     if (p->next == NULL) {
         printf("Termo nao encontrado ou invalido");
         return;
